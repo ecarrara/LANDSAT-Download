@@ -41,8 +41,16 @@ def connect_earthexplorer_proxy(proxy_info,usgs):
     else :
         print "Error : CSRF_Token not found"
         sys.exit(-3)
+
+    m = re.search(r'<input .*?name="__ncforminfo".*?value="(.*?)"', data)
+    if m:
+        ncforminfo = m.group(1)
+    else :
+        print "Error : NCFormInfo not found"
+        sys.exit(-3)
+
     # parametres de connection
-    params = urllib.urlencode(dict(username=usgs['account'], password=usgs['passwd'], csrf_token=token))
+    params = urllib.urlencode(dict(username=usgs['account'], password=usgs['passwd'], csrf_token=token, __ncforminfo=ncforminfo))
     # utilisation
 
     request = urllib2.Request("https://ers.cr.usgs.gov", params, headers={})
@@ -71,8 +79,16 @@ def connect_earthexplorer_no_proxy(usgs):
     else :
         print "Error : CSRF_Token not found"
         sys.exit(-3)
-        
-    params = urllib.urlencode(dict(username=usgs['account'],password= usgs['passwd'], csrf_token=token))
+
+    m = re.search(r'<input .*?name="__ncforminfo".*?value="(.*?)"', data)
+    if m:
+        ncforminfo = m.group(1)
+    else :
+        print "Error : NCFormInfo not found"
+        sys.exit(-3)
+
+    params = urllib.urlencode(dict(username=usgs['account'], password=usgs['passwd'], csrf_token=token, __ncforminfo=ncforminfo))
+
     request = urllib2.Request("https://ers.cr.usgs.gov/login", params, headers={})
     f = urllib2.urlopen(request)
 
